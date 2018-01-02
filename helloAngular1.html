@@ -1,0 +1,607 @@
+<!doctype html>
+<html>
+  <head>
+      <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
+      <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular-route.min.js"></script>
+    <style type="text/css">
+      span {font-weight: bold;}
+      .rosso {color: red;}
+      .blu {color: blue;}
+      .verde {color: green;}
+      .viola {color: purple;}
+      .normale {font-style: normal; font-size: 18px;}
+      .grassetto {font-weight: bold; font-size: 8px;}
+      .corsivo {font-style: italic; font-size: 32px;}
+      td {min-width: 100px; border: 1px solid #ccc; border-spacing: 0;}
+      .testForm2 input {color: blue;}
+      .testForm2 input.classeSeValido {color: green;}
+      .testForm2 input.classeSeInvalido {color: red;}
+    </style>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td ng-app="myApp1">
+            <div ng-controller="userController1 as user1">
+                <label>Name:</label>
+                <input type="text" ng-model="user1.yourName" placeholder="Enter a name here">
+                <hr>
+                <p>Hello {{user1.yourName}}!</p>
+                <p>{{user1.saluta()}}</p>
+                <p ng-controller="userController1a as user1a">Sei in "userController1": {{user1.utente.nome}} {{user1.utente.cognome}}
+                <br>
+                {{user1a.saluta1a(user1.yourName) | uppercase | limitTo:25}}</p>
+              </div>
+              <h3>Ma qui non si aggiunge {{yourName}}</h3>
+              <div>
+                <div ng-controller="userController2">
+                  <p>Nome: <input type="text" ng-model="utentiObj.nome"></p>
+                  <p>Cognome: <input type="text" ng-model="utentiObj.cognome"></p>
+                  <p>{{saluta()}}</p>
+                  <p>{{utentiObj.nome}}</p>
+                  <p ng-controller="salutaController">Controller 3: {{saluta()}}</p>
+                </div>
+              </div>
+              <div ng-controller="userController as userCtrl">
+                <p>Nome: <input type="text" ng-model="userCtrl.utente.nome"></p>
+                <p>Cognome: <input type="text" ng-model="userCtrl.utente.cognome"></p>
+                <p ng-bind="2 - 5"> {{5 * 5 }}</p>
+                <div ng-show="false">Questo è un test</div> 
+                <div ng-hide="true">Questo è un test</div> 
+                <p ng-show="userCtrl.utente.nome || userCtrl.utente.cognome" ng-controller="greetingController as greetingCtrl">{{greetingCtrl.saluta(userCtrl.utente)}}</p>
+                <p ng-if="userCtrl.utente.nome && userCtrl.utente.cognome" ng-controller="greetingController as greetingCtrl">con ng-IF: {{greetingCtrl.saluta(userCtrl.utente)}}</p>
+              </div>
+              <p>Scegli il colore: <input type="text" ng-model="colore"></p>
+              <p>Scegli il stile: <input type="text" ng-model="stile"></p>
+              <p>Scegli grandezza: <input type="text" ng-model="grandezza"></p>
+              <div ng-switch="colore">
+                <span ng-switch-when="rosso" ng-class="[colore, stile]">{{colore}}</span>
+                <span ng-switch-when="verde" ng-class="[colore, stile]">{{colore}}</span>
+                <span ng-switch-when="blu" ng-class="[colore, stile]">{{colore}}</span>
+                <span ng-switch-default style="color:black;">{{colore}}</span>
+                <span ng-class="colore == 'rosso' ? 'rosso' : 'viola'">TESTO di Default Viola, se no {{colore}}</span>
+                <span ng-class="{'grassetto': grandezza.length < 4, 'normale': grandezza.length >= 4 && grandezza.length < 8, 'corsivo': grandezza.length >= 8}"> Grandezza {{colore}}</span>
+              </div>
+              <p>Età: <input type="text" ng-model="utente.eta"></p>    
+             <div ng-include="utente.eta >= 18 ? 'dati/docMaggiorenni.html' : 'dati/docMinorenni.html'"></div>
+             
+             <div ng-controller="userController2" ng-include="'documentoInterno'"></div>
+             <script type="text/ng-template" id="documentoInterno">
+              <p style="color: red; font-size: 28px; font-weight: bold;">
+                Questo l'ho caricato direttamente internamente.  {{someValue}}
+              </p>
+            </script>
+             <hr>
+             <div ng-controller="ngrepeat_array">
+                <h3>ng-repeat & array</h3>
+                <ul>
+                  <li ng-repeat="nome in elencoNomi | orderBy:nome">{{nome}}</li>
+                  <li ng-repeat="nomeP in persone | orderBy:'cognome' | filter:{citta: 'm', nome: 'a', cognome: 'i'}">{{nomeP.nome}} {{nomeP.cognome}}, {{nomeP.citta}}</li>
+                </ul>
+                <table cellspacing = "0">
+                  <tr><th>Indice</th><th>Nome</th><th>Cognome</th><th>Città</th></tr>
+                  <tr ng-repeat="persona in persone | orderBy:'-cognome'">
+                    <td>{{$index}}</td><td>{{persona.nome}}</td><td>{{persona.cognome}}</td><td>{{persona.citta}}</td>
+                  </tr>
+                </table>
+                <ul>
+                  <li ng-repeat="(chiave, valore) in persone">
+                    {{chiave}} e {{valore.cognome}}
+                  </li>
+                </ul>
+                <select ng-model="option_ngrepeat">
+                    <optgroup label="test AngularJS">
+                      <option ng-repeat="valore in persone" value="{{valore.nome}}">{{valore.citta}}</option>
+                    </optgroup>
+                </select>
+                <select>        
+                  <optgroup ng-repeat="valore in elencoCitta" label="{{valore.regione}}">
+                    <option ng-repeat="valore in elencoCitta" value="{{valore.nome}}">{{valore.nome}}</option>
+                  </optgroup>
+                </select>
+                <select ng-model="option_ngrepeat1" ng-options="valore.codice for valore in elencoCitta" multiple="true"></select>
+                <select ng-model="option_ngrepeat2" ng-options="citta.codice as citta.nome for citta in elencoCitta"></select>
+                <select ng-model="option_ngrepeat3" ng-options="cittaValore.codice as cittaValore.nome group by cittaValore.regione for cittaValore in elencoCitta"></select>
+                <select ng-model="option_ngrepeat4" ng-options="pValore.cognome as pValore.nome group by pValore.citta for pValore in persone"></select>
+                <select ng-model="option_ngrepeat5" ng-options="valore for (chiave, valore) in elencoNomi"></select>
+                <p ng-if="option_ngrepeat">Hai selezionato {{option_ngrepeat}} e {{option_ngrepeat2}}</p>
+                <p>Filtra per nome: <input type="text" ng-model="filtro"></p>
+                <ul> 
+                    <li ng-repeat="citta in elencoCitta | filter:{nome:filtro}">{{citta.nome}}</li> 
+                </ul>
+                <ul>
+                  <!-- in questo caso visualizza anche le città di Mi e Como, xkè il filtraggio è effettuato sulla R non solo del nome della città ma anche sul nome della rispettiva regione e sigla -->
+                  <li ng-repeat="citta in elencoCitta | filter:'R'">
+                    {{citta.nome}}
+                  </li>
+                </ul>
+              </div>
+        </td>
+
+        <!-- colonna 2 -->
+        <td id="myApp2">
+          <div ng-controller="colonna2a">
+            <input type="number" ng-model="numero1"/>
+            +
+            <input type="number" ng-model="numero2"/>
+            =
+            <input type="number" ng-model="risultato"/> 
+            <br>               
+            <button ng-click="risultato = numero1 + numero2" ng-mouseover="risultato= numero1 * 2">Somma</button>
+            <button ng-click="moltiplica()">Moltiplica</button>
+            <button ng-click="dividi(numero1, numero2, $event)">Dividi</button>
+            <p>{{1200.45786 | currency:"€":2}}</p>
+            <p>{{dataOra | date:"EEEE GGGG dd/MM/yyyy ww"}}</p>
+            <p>{{dataISO2}}</p>
+            <p>{{filtroInComponent}}</p>
+            <p>Filtra per regione: <input type="text" ng-model="filtro1" ng-change="filtraLaRegione()"></p>
+            <ul> 
+                <li ng-repeat="valore in filtroInComponent1">{{valore.nome}}</li> 
+            </ul>
+          </div>
+          <p>{{"tutte le librerie e tecniche che sono uscite in questi anni, questo è un test" | capitalize}}</p>
+
+          <div ng-controller="cittaCtrl">
+            <p>Città: <input type="text" ng-model="cittaNew"></p>
+            <p>Regione: <input type="text" ng-model="regioneNew"></p>
+            <p><button ng-click="aggiungiCittaRegione()">Aggiungi</button></p>
+          </div>
+          <div ng-controller="elencoCittaRegioneCtrl">
+            <ul>
+              <li ng-repeat="citta in elencoCitta1">{{citta.nome}}</li>
+            </ul>
+          </div>
+          <div ng-controller="myController1">
+            <h3>Aggiungi Nominativo</h3>
+            <p>Nome: <input type="text" ng-model="NameNew"></p>
+            <p>Città: <input type="text" ng-model="CityNew"></p>
+            <p>Stato: <input type="text" ng-model="CountryNew"></p>
+            <p><button ng-click="aggiungiNominativoFunction()">Aggiungi Nominativo</button></p>
+            <p ng-show="aggiuntoNominativo">{{aggiuntoNominativo}}</p>
+            <ul> 
+              <li ng-repeat="rigaNew in riga.elencoCitta">
+                  {{ rigaNew.Country + ', ' + rigaNew.City + ', ' + rigaNew.Name}}
+              </li>
+            </ul>
+          </div>
+          <div ng-controller="myController2"> 
+            <ul> 
+              <li ng-repeat="row in jsondata">
+                 {{ row.id + ', ' + row.name + ', ' + row.location}}
+              </li>
+            </ul>
+          </div>
+          <div>
+            In questo caso la variabile "utente.nome" si aggiorna solo all'evento indicato (non mentre si scrive)
+              <input type="text" ng-model="utente.nome" ng-model-options="{updateOn: 'blur mousedown'}">
+              <input type="text" ng-model="utente.nome" ng-model-options="{updateOn: 'default blur', debounce: {default: 2000, blur:0}}">
+              <input type="checkbox" ng-model="utente.cittadinanzaItaliana" ng-true-value="'Siiiiiii, è vero!!!'" ng-false-value="'No, ma va....'" id="subscribeNews"><label for="subscribeNews">Vero o Falso?</label>
+              <input type="radio" ng-model="utente.sesso" value="maschio">
+              <input type="radio" ng-model="utente.sesso" value="femmina">             
+              <p>{{utente.nome}} {{utente.cittadinanzaItaliana}} {{utente.sesso}}</p>
+          </div>
+          <div ng-controller="contrForm1">
+            <form name="testForm" novalidate>
+              <div ng-show="testForm.$dirty">Form modificato</div>
+              <div ng-show="testForm.$pristine">Form non modificato</div>
+              <input type="text" ng-model="utenteForm.nome">
+              <input type="checkbox" ng-model="utenteForm.citITA">
+              <label for="insCit">Inserisci cittadinanza</label>
+              <input name="insCit" type="text" ng-model="utenteForm.cit" ng-required="!utenteForm.citITA" ng-show="!utenteForm.citITA">
+              <button type="submit" ng-click="invia(utenteForm)">Invia Dati 1</button>
+            </form>
+            <form name="testForm2" novalidate class="testForm2" ng-submit="invia(utenteForm2)">
+              <input type="text" ng-model="utenteForm2.nome" name="nomeUtente2" ng-maxlength="20" ng-required="true" ng-class="
+                {'': testForm2.nomeUtente2.$pristine, 'classeSeValido': testForm2.nomeUtente2.$valid, 'classeSeInvalido': testForm2.nomeUtente2.$invalid}
+              ">
+              <div ng-show="testForm2.nomeUtente2.$invalid">Non puoi superare i 20 caratteri</div>
+              <div ng-show="testForm2.nomeUtente2.$error.required">Il nome utente è obbligatorio</div>
+              <div ng-show="testForm.insCit.$error.required">Anche l'indicazione della cittadinanza è obbligatoria</div>
+
+              <div ng-show="myForm.nomeUtente.$error.maxlength && myForm .prontaPerInvio">Il nome utente non può superare i 20 caratteri</div>
+              <div ng-show="myForm.nomeUtente.$error.required && myForm .prontaPerInvio">Il nome utente è obbligatorio</div>
+              
+              <button type="submit" ng-disabled="testForm2.$invalid">Invia dati 2</button>
+              <button type="submit">Invia dati 2 di nuovo</button>
+            </form>
+          </div>
+          <div ng-controller="contestoAngular">              
+              Numero: <input type="text" ng-model="numero"></br>                  
+              <button id="btnRaddoppia">Raddoppia</button></br>                  
+              <span>{{doppio}}</span>
+          </div>
+          <div ng-controller="ctrlDirettivaCustom">
+            <div enrititoloenrico></div>
+            <enri-direttiva-custom-esterna elenco-citta="elencoCitta" proprieta-citta="'nome'" svuota-azione="svuotaCitta()"></enri-direttiva-custom-esterna>
+            <enri-direttiva-custom-esterna elenco-citta="elencoCitta2" proprieta-citta="'nome'"></enri-direttiva-custom-esterna>
+          </div>
+        </td>
+      </tr>
+    </table>
+    
+
+    <script type="text/javascript">
+      angular.module("myApp1", [])
+        .controller("userController2",
+          function($scope) {
+            $scope.nome = "Nome2";
+            $scope.cognome = "Cognome2";
+            $scope.utentiObj = {nome: "NomeObj", cognome: "CognomeObj" };
+            $scope.saluta = function() {
+              return "Controller 2: " + $scope.utentiObj.nome + " " + $scope.cognome + "!";
+            };
+            $scope.someValue = "template t1";
+          }
+        )
+        .controller("userController1",
+          function() {
+            this.yourName = "HEI EHI";
+              this.utente = {nome: "Mario", cognome: "Rossi"};
+            this.saluta = function() {
+              // return "Controller 1 senza $scope; " + this.yourName + " " + utente.cognome; ERRORE, perché "utente.cognome" ancora non è stato definito, lo sarà al controller 2
+              return "Controller 1 senza $scope; " + this.yourName;
+            };
+          }
+        )
+        .controller("userController1a",
+          function() {
+            this.cognome = "cognome1a";
+            this.saluta1a = function(yourName) {
+              return "Controller 1a senza $scope: " + yourName + " " + this.cognome;
+            };
+          }
+        )
+        .controller("salutaController",
+          function($scope) {
+            $scope.saluta = function() {
+              return " Saluta da " + $scope.nome + " " + $scope.utentiObj.cognome;
+            }
+          }
+        )
+        .controller("userController",
+          function() {
+              this.utente = {nome: "Mario", cognome: "Rossi"};
+              this.salutaEs = function() {}
+          })
+        .controller("greetingController",
+          function() {
+              this.saluta = function(utente) {
+                  return "Buongiorno " + utente.nome + " " + utente.cognome + "!"
+              };
+          })
+        .controller("ngrepeat_array",
+          function($scope) {
+            $scope.elencoNomi = ["Marco", "Giovanni", "Andrea", "Roberto"];
+            $scope.persone = [
+              { nome: "Andrea",   cognome: "Rossi",  citta: "Roma"    },
+              { nome: "Marco",    cognome: "Verdi",  citta: "Milano"  },
+              { nome: "Giovanni", cognome: "Neri",   citta: "Napoli"  },
+              { nome: "Roberto",  cognome: "Gialli", citta: "Palermo" }
+            ];
+            $scope.elencoCitta = [
+              {codice: "RM", nome: "Roma", regione: "Lazio"},
+              {codice: "LT", nome: "Latina", regione: "Lazio"},
+              {codice: "MI", nome: "Milano", regione: "Lombardia"},
+              {codice: "NA", nome: "Napoli", regione: "Campania"},
+              {codice: "CO", nome: "Como", regione: "Lombardia"},
+              {codice: "PA", nome:"Palermo", regione: "Sicilia"},
+              {codice: "CA", nome: "Caserta", regione: "Campania"},
+              {codice: "AV", nome: "Avellino", regione: "Campania"},
+              {codice: "TP", nome:"Trapani", regione: "Sicilia"},
+              {codice: "AG", nome:"Agrigento", regione: "Sicilia"}
+            ];
+            $scope.option_ngrepeat1 = $scope.elencoCitta[8];  
+            $scope.option_ngrepeat2 = $scope.elencoCitta[2];    
+            $scope.option_ngrepeat3 = $scope.elencoCitta[3];  
+            $scope.option_ngrepeat4 = $scope.persone[3];      
+          }
+        );
+
+
+
+
+
+      // caricamento del modulo esterno "ngRoute"
+      angular.module("myApp2", ["ngRoute"])
+
+      // Configurazione del Routing START
+        .config( function($routeProvider){
+          $routeProvider
+            /*.when("/", {
+                  templateUrl: "dati/listaUtenti.html",
+                  controller: "listaUtentiCtrl"
+              })
+            .when("/RouteDefault", {
+                  templateUrl: "dati/RouteDefault.html",
+                  controller: "contrRoute1"
+              })                              
+            .when("/utenti/:userId", {
+                  templateUrl: "dati/utente.html",
+                  controller: "utenteCtrl"
+              })
+              */
+            // route for the home page
+            .when('/', {
+              templateUrl : 'dati/home.html',
+              controller  : 'mainController'
+            })
+
+            // route for the about page
+            .when('/about', {
+              templateUrl : 'dati/about.html',
+              controller  : 'aboutController'
+            })
+
+            // route for the contact page
+            .when('/contact', {
+              templateUrl : 'dati/contact.html',
+              controller  : 'contactController'
+            });
+        //                .otherwise({ redirectTo: "/" });
+        })
+        .factory("utentiService", function() {
+          var self = {};
+          self.utenti = [
+            { id:1, nome: "Andrea",   cognome: "Rossi",  citta: "Roma"    },
+            { id:2, nome: "Marco",    cognome: "Verdi",  citta: "Milano"  },
+            { id:3, nome: "Giovanni", cognome: "Neri",   citta: "Napoli"  },
+            { id:4, nome: "Roberto",  cognome: "Gialli", citta: "Palermo" }
+          ];
+          return self;
+        })
+        .controller("listaUtentiCtrl", function($scope, utentiService, $location) {
+          $scope.utenti = utentiService.utenti;
+          console.log("test1", $location.path(), utentiService.utenti);
+        })
+        .controller("utenteCtrl", function($scope, $routeParams, $location, filterFilter) {
+          var userId = $routeParams.userId;
+          console.log(userId);
+          $scope.utente = filterFilter(utentiService.utenti, { id: userId })[0];
+        })
+        .controller('mainController', function($scope) {
+          $scope.message = 'Everyone come and see how good I look!';
+        })
+        .controller('aboutController', function($scope) {
+          $scope.message = 'Look! I am an about page.';
+        })
+        .controller("contrRouteDefault", function($scope, $location){
+          console.log("test3", decodeURIComponent($location.path()));
+		      $scope.message = 'Contact us! JK. This is just a demo.';
+        })
+      // Configurazione del Routing END
+
+        .controller("colonna2a",
+          function($scope, dateFilter, filterFilter, somma1, somma2){
+            $scope.moltiplica = function() {
+              $scope.risultato = $scope.numero1 * $scope.numero2;
+            }
+            $scope.dividi = function(x, y, event) {
+              $scope.risultato = x / y;
+              console.log("È stato cliccato alla posizione " + event.clientX + ", " + event.clientY + ", " + event.target);
+            };
+            $scope.dataOra = Date.now();
+            var dataISO = dateFilter(Date.now(), "ww GGGG dd/MM/yyyy EEEE");
+            $scope.dataISO2 = dateFilter(Date.now(), "ww GGGG dd/MM/yyyy EEEE");
+            console.log(dataISO);
+            
+            $scope.elencoCitta = [
+              {codice: "RM", nome: "Roma", regione: "Lazio"},
+              {codice: "LT", nome: "Latina", regione: "Lazio"},
+              {codice: "MI", nome: "Milano", regione: "Lombardia"},
+              {codice: "NA", nome: "Napoli", regione: "Campania"},
+              {codice: "CO", nome: "Como", regione: "Lombardia"},
+              {codice: "PA", nome:"Palermo", regione: "Sicilia"},
+              {codice: "CA", nome: "Caserta", regione: "Campania"},
+              {codice: "AV", nome: "Avellino", regione: "Campania"},
+              {codice: "TP", nome:"Trapani", regione: "Sicilia"},
+              {codice: "AG", nome:"Agrigento", regione: "Sicilia"}
+            ];
+
+            //I filtri all'interno dei componenti NON hanno il DataBinding!!!!!
+            //$scope.filtroInComponent = $scope.elencoCitta[1];
+            $scope.filtroInComponent = filterFilter($scope.elencoCitta, {regione: 'Sicilia'});
+            $scope.filtroInComponent1 = filterFilter($scope.elencoCitta, {regione: $scope.filtro1});
+            $scope.filtroInComponent2 = filterFilter($scope.elencoCitta, {regione: 'Sicilia'});
+            $scope.filtraLaRegione = function() {
+              $scope.filtroInComponent1 = filterFilter($scope.elencoCitta, {regione: $scope.filtro1});
+            }
+            //esempio di utilizzo di un Servizio posto successivamente, ma sempre all'interno dello stesso modulo   
+            $scope.x = somma1.somma(5,2); 
+            $scope.y = somma2(2,2);
+            console.log($scope.x, $scope.y);
+          })
+          //Filtro personalizzato, che viene aggiunto a tutto il Modulo (non a un solo preciso componente)
+          .filter("capitalize",   
+            function(){ 
+                return function(text) { 
+                    var result = text; 
+                    if (text && isNaN(text)) { 
+                        //result = text.charAt(0).toUpperCase() + text.substr(1); 
+                      result = text.replace(/\w\S*/g, function(text){return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();});
+                    } 
+                    return result; 
+                } 
+            })
+            //esempio di Servizio, nel primo caso il risultato viene salvato dentro una proprietà della Funzione/Oggetto
+            .service("somma1", function() { 
+                this.somma = function(a,b) { return a + b}; 
+            })
+            //nel secondo caso il risultato viene restituito con Return
+            .factory("somma2", function() { 
+                return function(a, b) { return a + b;} 
+            })
+            .service("elencoCittaService", function(){
+              this.elenco = [ 
+                  {nome: "Roma", regione: "Lazio"}, 
+                  {nome: "Latina", regione: "Lazio"}, 
+                  {nome: "Milano", regione: "Lombardia"}, 
+                  {nome: "Napoli", regione: "Campania"}, 
+                  {nome: "Como", regione: "Lombardia"}, 
+                  {nome:"Palermo", regione: "Sicilia"}, 
+                  {nome: "Caserta", regione: "Campania"}, 
+                  {nome: "Avellino", regione: "Campania"}, 
+                  {nome:"Trapani", regione: "Sicilia"}, 
+                  {nome:"Agrigento", regione: "Sicilia"} 
+              ];
+              this.aggiungi = function (citta) {
+                this.elenco.push(citta);
+                console.log(this.elenco);
+              }
+            })
+            .service("aggiungiCittaAElencoEsternoTramiteHTTPPost", function($http){
+              this.aggiungiNominativo = function(nominativoNew){
+                  console.log("Nominativo " + nominativoNew + " aggiunto correttamente.");
+                $http.post("dati/elencoCitta.js", nominativoNew)
+                .then( function(risposta){
+                  console.log("Nominativo " + NameNew + " aggiunto correttamente.");
+                  //this.aggiuntoNominativo = "Nominativo " + NameNew + " aggiunto correttamente.";
+                })
+                .catch(function(risposta){
+                  console.error("Errore!:", risposta.status, risposta.headers);
+                })
+                .finally(function(){
+                  console.log("Sezione Chiusa Service");
+                }) 
+              }
+            })
+            .controller("elencoCittaRegioneCtrl", function($scope, elencoCittaService){
+              $scope.elencoCitta1 = elencoCittaService.elenco;
+            })
+            .controller("cittaCtrl", function($scope, elencoCittaService){
+              $scope.aggiungiCittaRegione = function(){
+                elencoCittaService.aggiungi({nome: $scope.cittaNew, regione: $scope.regioneNew});
+              }
+            })
+            .controller('myController1', function($scope, $http, aggiungiCittaAElencoEsternoTramiteHTTPPost){
+              $scope.aggiungiNominativoFunction = function(){
+                console.log("test");
+                aggiungiCittaAElencoEsternoTramiteHTTPPost.aggiungiNominativo({Name: $scope.NameNew, City: $scope.CityNew, Country: $scope.ContryNew});
+              };
+              $http.get("dati/elencoCitta.js")
+              .then(function(risposta){
+                $scope.riga = risposta.data;
+              })
+              .catch(function(risposta){
+                console.error("Errore:", risposta.status, risposta.data);
+              })
+              .finally(function(){
+                console.log("Sezione Chiusa");
+              })
+            })
+            .controller('myController2', function($scope, $http){
+                $http.get('sample_json.js')
+                .then(function (response){
+                  $scope.jsondata = response.data;
+                  console.log("status:" + response.status);
+                }).catch(function(response) {
+                  console.error('Error occurred:', response.status, response.data);
+                }).finally(function() {
+                  console.log("Task Finished.");
+                });
+            })
+            .controller('contrForm1', function($scope, $http) {
+              $scope.prontaPerInvio = false;
+              
+              $scope.invia = function(utente) {
+                if($scope.testForm2.$valid){
+                  $scope.prontaPerInvio = false;
+                  console.log($scope.prontaPerInvio);
+                  $http.post("elaboraForm", utente)
+                  .success(function() {console.log("dati inviati correttamente!"); })
+                  .error(function() { console.log("Si è verificato un errore"); });
+                } else {
+                  $scope.prontaPerInvio = true;
+                  console.log($scope.prontaPerInvio);
+                }
+              };       
+              })
+            .controller("contestoAngular", function($scope){
+              
+              $scope.$watch("numero", function(nuovoValore, vecchioValore) {
+                (nuovoValore != vecchioValore) ? console.log("nuovo valore: " + nuovoValore) : console.log("il valore non è cambiato: " + vecchioValore);
+              }, true);
+
+              document.getElementById("btnRaddoppia").addEventListener("click", function(){
+                console.log("hai cliccato");
+                // inserisce il codice seguente all'interno del contesto AngularJs
+                $scope.$apply( function(){
+                  $scope.doppio = $scope.numero * 2;
+                });
+              });
+            })
+            .directive("enrititoloenrico", function() { 
+              return { 
+                template: "<h1>Questo è un titoloenrico</h1>"
+              }; 
+            })
+            .directive("enriDirettivaCustomEsterna", function() {
+              return {
+                restrict: "EA",
+                templateUrl: "/dati/enriDirettivaCustom2.html",
+                scope: {
+                  elencoCitta: "=",
+                  proprietaCitta: "=",
+                  svuotaAzione: "&",
+                },
+
+                link: function(scope, element, attributes) {
+                  var primoElemento1 = {};
+                  var primoElemento2 = {};
+                  primoElemento1[scope.proprietaCitta] = "Seleziona una città 1";
+                  primoElemento2[scope.proprietaCitta] = "Seleziona una città 2";
+
+                  console.log("1", scope.elencoCitta, element, attributes.elencoCitta);
+
+                  if(attributes.elencoCitta == "elencoCitta" && scope.elencoCitta.length > 0) {
+                    scope.elencoCitta.splice(0, 0, primoElemento1);
+                    scope.oggettoSelezionato = primoElemento1;
+                  }
+                  if(attributes.elencoCitta == "elencoCitta2" && scope.elencoCitta.length > 0) {
+                    scope.elencoCitta.splice(0, 0, primoElemento2);
+                    scope.oggettoSelezionato = primoElemento2;
+                  }
+                  element.prepend("<p>Seleziona una città</p>")
+                }
+              };
+            })
+            .controller("ctrlDirettivaCustom", function($scope){
+              $scope.elencoCitta = [
+                {codice: "RM", nome: "Roma"},   
+                {codice: "MI", nome: "Milano"}, 
+                {codice: "NA", nome: "Napoli"}, 
+                {codice: "PA", nome:"Palermo"}
+              ];
+              $scope.elencoCitta2 = [
+                {codice: "TO", nome: "Torino"},   
+                {codice: "CT", nome: "Catania"}, 
+                {codice: "FI", nome: "Firenze"}
+              ];
+              $scope.svuotaCitta = function(){
+                $scope.elencoCitta = [];
+              };
+            })
+          ;
+
+      // Automaticamente AngularJS non avvia Multiple "ng-app", soltanto la prima! Le altre vanno avviate a mano, tramite il comando "bootstrap" di Angular.
+      var myApp2 = document.getElementById('myApp2');
+      angular.bootstrap(myApp2, ['myApp2']);
+
+      
+
+      angular.module("myApp", []) 
+          // setta configurazioni globali Prima che vengano avviati tutti i Moduli angularjs
+          .config(function($httpProvider) {
+              $httpProvider.defaults.headers.common["Authorization"] = "Basic cGlwcG86cGx1dG8=";
+          })
+          // setta configurazioni globali Dopo che tutti i moduli sono stati caricati.
+          .run(function($rootScope) {
+              $rootScope.appVersion = "1.0";
+          });
+    </script>
+    
+  </body>
+</html>
+
+<!-- sei giunto qui nella guida: http://www.html.it/pag/54118/configurazione-del-routing/ https://filecrypt.cc/Container/B56164EF86.html -->

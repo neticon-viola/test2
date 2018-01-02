@@ -1,0 +1,7 @@
+<!--
+<select ng-model="oggettoSelezionato"> 
+    <option ng-repeat="citta in elencoCitta" value="citta.codice">{{citta.nome}}</option> 
+</select>
+-->
+<select ng-model="oggettoSelezionato" ng-options="citta[proprietaCitta] for citta in elencoCitta"></select>
+<button ng-click="svuotaAzione()">svuota</button>

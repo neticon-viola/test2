@@ -1,0 +1,11 @@
+<div class="jumbotron text-center">
+        <h1>Home Page</h1>
+        
+        <p>{{ message }}</p>
+        <ul>
+                <li ng-repeat="utente in utenti">
+                    <a href="#utenti/{{utente.id}}">{{utente.nome}} {{utente.cognome}}</a>
+                    <a href="#RouteDefault">Clicca qui: {{utente.nome}}</a>
+                </li>
+            </ul>
+    </div>
